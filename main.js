@@ -36,7 +36,7 @@ for (let i = 0; i < row; i++) {
 console.log(gameCells);
 for (let i = 0; i < row; i++) {
    for (let j = 0; j < column; j++) {
-      if (gameCells[i][j].class == "bomb") {
+      if (gameCells[i][j].class == "active") {
          var bombCount = 0;
          for (let x = -1; x <= 1; x++) {
             for (let y = -1; y <= 1; y++) {
@@ -52,11 +52,16 @@ for (let i = 0; i < row; i++) {
             for (let y = -1; y <= 1; y++) {
                if (i + x >= 0 && i + x < row && j + y >= 0 && j + y < column) {
                   if (gameCells[i + x][j + y].class != "bomb") {
+                     if (bombCount == 0) {
+                        bombCount = "";
+                     }
                      gameCells[i][j].bombsCounts = bombCount;
                   }
                }
             }
          }
+      } else {
+         gameCells[i][j].bombsCounts = "";
       }
    }
 }
@@ -64,16 +69,23 @@ function generateCells(Cells) {
    let template = ``;
    Cells.forEach((row) => {
       row.forEach((Cell) => {
-         template += `<div class="cell size closed" data-row="${Cell.row}" data-column="${Cell.column}" data-index="${Cell.class}">${Cell.bombsCounts}</div>`;
+         template += `<div class="cell size closed" data-row="${Cell.row}" data-column="${Cell.column}" data-index="${Cell.class}" data-number="${Cell.bombsCounts}">${Cell.bombsCounts}</div>`;
          document.querySelector(".grid").innerHTML = template;
       });
    });
 }
 generateCells(gameCells);
-console.log(gameCells[0][0 + 1]);
-
+let gameElemets = document.querySelectorAll(".cell");
+gameElemets.forEach(function (element) {
+   element.addEventListener("mousedown", function (event) {
+      console.log("Клик (кнопка отпущена), button: " + event.button);
+      if (event.button === 2) {
+         event.target.classList.toggle("flag");
+      }
+   });
+});
 var cells = document.querySelectorAll(".cell");
-cells.get;
+
 cells.forEach(function (cell) {
    cell.addEventListener("click", function (event) {
       var gameCellsRow = event.target.closest("[data-row]");
@@ -85,19 +97,10 @@ cells.forEach(function (cell) {
       gameCells.forEach((row) => {
          if (index == "bomb") {
             elt.classList.add("bomb");
+            location.reload();
+            alert("You lose!");
          } else {
             elt.classList.add("opened");
-            for (let i = -1; i <= 1; i++) {
-               for (let j = -1; j <= 1; j++) {
-                  if (
-                     rowValue + i >= 0 &&
-                     rowValue + i < row &&
-                     columnValue + j >= 0 &&
-                     columnValue + j < column
-                  ) {
-                  }
-               }
-            }
          }
       });
    });

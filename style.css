@@ -7,6 +7,15 @@ body {
    height: 100vh;
    background-color: #f0f0f0;
 }
+.cell {
+   display: flex;
+   justify-content: center;
+   align-items: center;
+   font-size: 25px;
+   color: transparent;
+   font-weight: 700;
+}
+
 .grid {
    display: grid;
    grid-template-columns: repeat(8, 26px);
@@ -15,7 +24,6 @@ body {
 .size {
    width: 24px;
    height: 24px;
-   font-size: 10px;
 }
 .closed {
    width: 100%;
@@ -31,6 +39,27 @@ body {
    background-color: #384048;
    border: #1c1f22 1px solid;
 }
+.cell[data-number="1"].opened {
+   color: #1976d2;
+}
+.cell[data-number="2"].opened {
+   color: #388e3c;
+}
+.cell[data-number="3"].opened {
+   color: #d32f2f;
+}
+.cell[data-number="4"].opened {
+   color: #7b1fa2;
+}
+.cell[data-number="5"].opened {
+   color: #f57c00;
+}
+
 .bomb {
    background-image: url(/mine.svg);
+}
+.flag {
+   background-image: url(/flag.svg);
+   background-position: center;
+   background-size: contain;
 }
