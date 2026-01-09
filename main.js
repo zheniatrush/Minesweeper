@@ -33,7 +33,7 @@ for (let i = 0; i < row; i++) {
       }
    }
 }
-console.log(gameCells);
+
 for (let i = 0; i < row; i++) {
    for (let j = 0; j < column; j++) {
       if (gameCells[i][j].class == "active") {
@@ -47,7 +47,6 @@ for (let i = 0; i < row; i++) {
                }
             }
          }
-         console.log(bombCount);
          for (let x = -1; x <= 1; x++) {
             for (let y = -1; y <= 1; y++) {
                if (i + x >= 0 && i + x < row && j + y >= 0 && j + y < column) {
@@ -78,7 +77,6 @@ generateCells(gameCells);
 let gameElemets = document.querySelectorAll(".cell");
 gameElemets.forEach(function (element) {
    element.addEventListener("mousedown", function (event) {
-      console.log("Клик (кнопка отпущена), button: " + event.button);
       if (event.button === 2) {
          event.target.classList.toggle("flag");
       }
@@ -97,9 +95,31 @@ cells.forEach(function (cell) {
       gameCells.forEach((row) => {
          if (index == "bomb") {
             elt.classList.add("bomb");
-            location.reload();
-            alert("You lose!");
+            // location.reload();
          } else {
+            for (let x = -1; x <= 1; x++) {
+               for (let y = -1; y <= 1; y++) {
+                  if (
+                     i + x >= 0 &&
+                     i + x < row &&
+                     j + y >= 0 &&
+                     j + y < column
+                  ) {
+                     let GameRowValue = rowValue + x;
+                     let GameColumnValue = columnValue + y;
+                     console.log(GameRowValue, GameColumnValue);
+                     let CellsOpened = document.querySelector(
+                        `[data-row="${GameRowValue}"][data-column="${GameColumnValue}"]`
+                     );
+                     console.log(CellsOpened);
+                     if (
+                        gameCells[rowValue + x][columnValue + y].class != "bomb"
+                     ) {
+                        CellsOpened.classList.add("opened");
+                     }
+                  }
+               }
+            }
             elt.classList.add("opened");
          }
       });
