@@ -8,14 +8,14 @@ function getRandomInt(min, max) {
    return Math.floor(Math.random() * (max - min) + min); // Максимум не включается, минимум включается
 }
 var bombs = [];
-let i = 0;
+let bomb = 0;
 do {
-   var bomba = getRandomInt(0, row * column);
-   i++;
-   if (!bombs.includes(bomba)) {
-      bombs.push(bomba);
+   var bombPosition = getRandomInt(0, row * column);
+   bomb++;
+   if (!bombs.includes(bombPosition)) {
+      bombs.push(bombPosition);
    }
-} while (i < 10);
+} while (bomb < 10);
 // console.log(bombs);
 for (let i = 0; i < row; i++) {
    gameCells[i] = [];
@@ -99,24 +99,23 @@ cells.forEach(function (cell) {
          } else {
             for (let x = -1; x <= 1; x++) {
                for (let y = -1; y <= 1; y++) {
+                  // console.log("хуй", event.target);
+                  // console.log("пизда", x);
+                  // console.log("залупа", row);
+                  // console.log("пеніс", rowValue);
+                  // console.log("жопа", columnValue);
+
+                  let GameRowValue = rowValue + x;
+                  let GameColumnValue = columnValue + y;
+                  console.log(GameRowValue);
+                  let CellsOpened = document.querySelector(
+                     `[data-row="${GameRowValue}"][data-column="${GameColumnValue}"]`
+                  );
+                  console.log(CellsOpened);
                   if (
-                     i + x >= 0 &&
-                     i + x < row &&
-                     j + y >= 0 &&
-                     j + y < column
+                     gameCells[rowValue + x][columnValue + y].class != "bomb"
                   ) {
-                     let GameRowValue = rowValue + x;
-                     let GameColumnValue = columnValue + y;
-                     console.log(GameRowValue, GameColumnValue);
-                     let CellsOpened = document.querySelector(
-                        `[data-row="${GameRowValue}"][data-column="${GameColumnValue}"]`
-                     );
-                     console.log(CellsOpened);
-                     if (
-                        gameCells[rowValue + x][columnValue + y].class != "bomb"
-                     ) {
-                        CellsOpened.classList.add("opened");
-                     }
+                     CellsOpened.classList.add("opened");
                   }
                }
             }
