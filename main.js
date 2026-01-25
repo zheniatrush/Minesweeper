@@ -5,17 +5,17 @@ var gameCells = [];
 function getRandomInt(min, max) {
    min = Math.ceil(min);
    max = Math.floor(max);
-   return Math.floor(Math.random() * (max - min) + min); // Максимум не включается, минимум включается
+   return Math.floor(Math.random() * (max - min) + min);
 }
 var bombs = [];
-let i = 0;
+let bomb = 0;
 do {
-   var bomba = getRandomInt(0, row * column);
-   i++;
-   if (!bombs.includes(bomba)) {
-      bombs.push(bomba);
+   var bombPosition = getRandomInt(0, row * column);
+   bomb++;
+   if (!bombs.includes(bombPosition)) {
+      bombs.push(bombPosition);
    }
-} while (i < 10);
+} while (bombs.length < 10);
 // console.log(bombs);
 for (let i = 0; i < row; i++) {
    gameCells[i] = [];
@@ -83,45 +83,55 @@ gameElemets.forEach(function (element) {
    });
 });
 var cells = document.querySelectorAll(".cell");
+console.log(bombs.length);
+
+function checkWin() {
+    const closedCells = document.querySelectorAll('.closed');
+    console.log(closedCells.length);
+    if (closedCells.length === bombs.length) {
+        alert("ПЕРЕМОГА!");
+    }
+}
 
 cells.forEach(function (cell) {
    cell.addEventListener("click", function (event) {
-      var gameCellsRow = event.target.closest("[data-row]");
-      var gameCellsColumn = event.target.closest("[data-column]");
-      let rowValue = parseInt(gameCellsRow.getAttribute("data-row"));
-      let columnValue = parseInt(gameCellsColumn.getAttribute("data-column"));
-      var elt = event.target.closest("[data-index]");
+      var elt = event.target.closest(".cell");
+      let rowValue = parseInt(elt.getAttribute("data-row"));
+      let columnValue = parseInt(elt.getAttribute("data-column"));
       var index = elt.getAttribute("data-index");
-      gameCells.forEach((row) => {
-         if (index == "bomb") {
-            elt.classList.add("bomb");
-            // location.reload();
-         } else {
-            for (let x = -1; x <= 1; x++) {
-               for (let y = -1; y <= 1; y++) {
-                  if (
-                     i + x >= 0 &&
-                     i + x < row &&
-                     j + y >= 0 &&
-                     j + y < column
-                  ) {
-                     let GameRowValue = rowValue + x;
-                     let GameColumnValue = columnValue + y;
-                     console.log(GameRowValue, GameColumnValue);
-                     let CellsOpened = document.querySelector(
-                        `[data-row="${GameRowValue}"][data-column="${GameColumnValue}"]`
-                     );
-                     console.log(CellsOpened);
-                     if (
-                        gameCells[rowValue + x][columnValue + y].class != "bomb"
-                     ) {
-                        CellsOpened.classList.add("opened");
-                     }
+      let currentData = gameCells[rowValue][columnValue];
+      if (index == "bomb") {
+         elt.classList.add("bomb");
+         alert("ТИ ПРОГРАВ!");
+         location.reload();
+      } else {
+         if (currentData.bombsCounts !== "") {
+            elt.classList.remove("closed");
+            elt.classList.add("opened");
+            checkWin();
+            return;
+         }
+         for (let x = -1; x <= 1; x++) {
+            for (let y = -1; y <= 1; y++) {
+               let GameRowValue = rowValue + x;
+               let GameColumnValue = columnValue + y;
+               if (GameRowValue >= 0 && GameRowValue < 8 && GameColumnValue >= 0 && GameColumnValue < 8) {
+                  let targetCell = gameCells[GameRowValue][GameColumnValue];
+                  let CellsOpened = document.querySelector(
+                     `[data-row="${GameRowValue}"][data-column="${GameColumnValue}"]`
+                  );
+                  if (targetCell.class !== "bomb" && targetCell.bombsCounts === "") {
+                     CellsOpened.classList.add("opened");
+                     CellsOpened.classList.remove("closed");
+                     checkWin();
                   }
                }
             }
-            elt.classList.add("opened");
          }
-      });
+         elt.classList.remove("closed");
+         elt.classList.add("opened");
+         checkWin();
+      }
+      
    });
 });
