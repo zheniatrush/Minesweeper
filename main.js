@@ -15,7 +15,11 @@ do {
    if (!bombs.includes(bombPosition)) {
       bombs.push(bombPosition);
    }
+<<<<<<< HEAD
 } while (bombs.length < 10);
+=======
+} while (bomb < 10);
+>>>>>>> bd4472f68d58e7fb1ee31ff9e44a391094a8555f
 // console.log(bombs);
 for (let i = 0; i < row; i++) {
    gameCells[i] = [];
@@ -99,6 +103,7 @@ cells.forEach(function (cell) {
       let rowValue = parseInt(elt.getAttribute("data-row"));
       let columnValue = parseInt(elt.getAttribute("data-column"));
       var index = elt.getAttribute("data-index");
+<<<<<<< HEAD
       let currentData = gameCells[rowValue][columnValue];
       if (index == "bomb") {
          elt.classList.add("bomb");
@@ -124,6 +129,32 @@ cells.forEach(function (cell) {
                      CellsOpened.classList.add("opened");
                      CellsOpened.classList.remove("closed");
                      checkWin();
+=======
+      gameCells.forEach((row) => {
+         if (index == "bomb") {
+            elt.classList.add("bomb");
+            // location.reload();
+         } else {
+            for (let x = -1; x <= 1; x++) {
+               for (let y = -1; y <= 1; y++) {
+                  // console.log("хуй", event.target);
+                  // console.log("пизда", x);
+                  // console.log("залупа", row);
+                  // console.log("пеніс", rowValue);
+                  // console.log("жопа", columnValue);
+
+                  let GameRowValue = rowValue + x;
+                  let GameColumnValue = columnValue + y;
+                  console.log(GameRowValue);
+                  let CellsOpened = document.querySelector(
+                     `[data-row="${GameRowValue}"][data-column="${GameColumnValue}"]`
+                  );
+                  console.log(CellsOpened);
+                  if (
+                     gameCells[rowValue + x][columnValue + y].class != "bomb"
+                  ) {
+                     CellsOpened.classList.add("opened");
+>>>>>>> bd4472f68d58e7fb1ee31ff9e44a391094a8555f
                   }
                }
             }
