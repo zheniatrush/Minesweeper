@@ -1,3 +1,52 @@
+min = 0;
+hour = 0;
+//Оставляем вашу функцию
+function init() {
+   sec = 0;
+   setInterval(tick, 1000);
+}
+
+//Основная функция tick()
+function tick() {
+   sec++;
+   if (sec >= 60) {
+      //задаем числовые параметры, меняющиеся по ходу работы программы
+      min++;
+      sec = sec - 60;
+   }
+
+   if (sec < 10) {
+      if (min < 10) {
+         if (hour < 10) {
+            document.getElementById("timer").innerHTML = "0" + min + ":0" + sec;
+         } else {
+            document.getElementById("timer").innerHTML = "0" + min + ":0" + sec;
+         }
+      } else {
+         if (hour < 10) {
+            document.getElementById("timer").innerHTML = "0" + min + ":0" + sec;
+         } else {
+            document.getElementById("timer").innerHTML = "0" + min + ":0" + sec;
+         }
+      }
+   } else {
+      if (min < 10) {
+         if (hour < 10) {
+            document.getElementById("timer").innerHTML = "0" + min + ":" + sec;
+         } else {
+            document.getElementById("timer").innerHTML = "0" + min + ":" + sec;
+         }
+      } else {
+         if (hour < 10) {
+            document.getElementById("timer").innerHTML = min + ":" + sec;
+         } else {
+            document.getElementById("timer").innerHTML =
+               hour + ":" + min + ":" + sec;
+         }
+      }
+   }
+}
+
 var row = 8;
 var column = 8;
 var counter = 0;
@@ -75,27 +124,46 @@ function generateCells(Cells) {
    });
 }
 generateCells(gameCells);
-let gameElemets = document.querySelectorAll(".cell");
-gameElemets.forEach(function (element) {
+
+var cells = document.querySelectorAll(".cell");
+var popupGameOver = document.querySelector(".game_over.lost");
+var popupGameWin = document.querySelector(".game_over.win");
+function checkWin() {
+   const closedCells = document.querySelectorAll(".closed");
+   if (closedCells.length === bombs.length) {
+      popupGameWin.style.display = "flex";
+      document.querySelector(".steps").innerHTML =
+         `Кількість кроків: ${clickCount}`;
+   }
+}
+function restartGame() {
+   location.reload();
+}
+cells.forEach(function (element) {
    element.addEventListener("mousedown", function (event) {
       if (event.button === 2) {
          event.target.classList.toggle("flag");
       }
    });
 });
-var cells = document.querySelectorAll(".cell");
-console.log(bombs.length);
-
-function checkWin() {
-    const closedCells = document.querySelectorAll('.closed');
-    console.log(closedCells.length);
-    if (closedCells.length === bombs.length) {
-        alert("ПЕРЕМОГА!");
-    }
-}
-
+let timerStart = false;
+cells.forEach(function (timerEvent) {
+   timerEvent.addEventListener(
+      "click",
+      function (timer) {
+         if (!timerStart) {
+            timerStart = true;
+            init();
+         }
+      },
+      { once: true },
+   );
+});
+let clickCount = 0;
 cells.forEach(function (cell) {
    cell.addEventListener("click", function (event) {
+      clickCount++;
+      document.querySelector(".step_counter").innerHTML = `${clickCount}`;
       var elt = event.target.closest(".cell");
       let rowValue = parseInt(elt.getAttribute("data-row"));
       let columnValue = parseInt(elt.getAttribute("data-column"));
@@ -103,8 +171,7 @@ cells.forEach(function (cell) {
       let currentData = gameCells[rowValue][columnValue];
       if (index == "bomb") {
          elt.classList.add("bomb");
-         alert("ТИ ПРОГРАВ!");
-         location.reload();
+         popupGameOver.style.display = "flex";
       } else {
          if (currentData.bombsCounts !== "") {
             elt.classList.remove("closed");
@@ -116,12 +183,20 @@ cells.forEach(function (cell) {
             for (let y = -1; y <= 1; y++) {
                let GameRowValue = rowValue + x;
                let GameColumnValue = columnValue + y;
-               if (GameRowValue >= 0 && GameRowValue < 8 && GameColumnValue >= 0 && GameColumnValue < 8) {
+               if (
+                  GameRowValue >= 0 &&
+                  GameRowValue < row &&
+                  GameColumnValue >= 0 &&
+                  GameColumnValue < column
+               ) {
                   let targetCell = gameCells[GameRowValue][GameColumnValue];
                   let CellsOpened = document.querySelector(
-                     `[data-row="${GameRowValue}"][data-column="${GameColumnValue}"]`
+                     `[data-row="${GameRowValue}"][data-column="${GameColumnValue}"]`,
                   );
-                  if (targetCell.class !== "bomb" && targetCell.bombsCounts === "") {
+                  if (
+                     targetCell.class !== "bomb" &&
+                     targetCell.bombsCounts === ""
+                  ) {
                      CellsOpened.classList.add("opened");
                      CellsOpened.classList.remove("closed");
                      checkWin();
@@ -133,6 +208,5 @@ cells.forEach(function (cell) {
          elt.classList.add("opened");
          checkWin();
       }
-      
    });
 });

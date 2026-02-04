@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
    <head>
       <meta charset="UTF-8" />
@@ -8,8 +8,27 @@
       <title>Document</title>
    </head>
    <body oncontextmenu="return false;">
-      <div class="grid">
-         <!-- <div class="size closed opened"></div> -->
+      <div class="game_container">
+         <div class="game_menu">
+            <div class="timer" id="timer">00:00</div>
+            <div class="step_counter">0</div>
+         </div>
+         <div class="grid"></div>
+      </div>
+      <div class="game_over lost">
+         <img src="lost.png" alt="Game Over" />
+         <p>ТИ ПРОГРАВ!</p>
+         <button class="restart_button" onclick="restartGame()">
+            ПЕРЕЗАПУСК
+         </button>
+      </div>
+      <div class="game_over win">
+         <img src="win.png" alt="Game Over" />
+         <p>ТИ ВИГРАВ!</p>
+         <p class="steps"></p>
+         <button class="restart_button" onclick="restartGame()">
+            ПЕРЕЗАПУСК
+         </button>
       </div>
       <script src="main.js"></script>
    </body>
