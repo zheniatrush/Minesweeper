@@ -109,7 +109,7 @@ body {
    height: 100%;
    background-position: center;
    background-size: contain;
-   background-image: url(/closed.svg);
+   background-image: url(closed.svg);
 }
 .opened {
    width: 100%;
@@ -135,10 +135,10 @@ body {
 }
 
 .bomb {
-   background-image: url(/mine.svg);
+   background-image: url(mine.svg);
 }
 .flag {
-   background-image: url(/flag.svg);
+   background-image: url(flag.svg);
    background-position: center;
    background-size: contain;
 }
