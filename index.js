@@ -42,45 +42,28 @@ passport.use(
 app.get("/register", function (_, res) {
    res.sendFile(__dirname + "/register.html");
 });
-function hashPassword(userPassword) {
-   bcrypt.hash(userPassword, 10, function (err, hash) {
-      if (err) {
-         // console.error("Error hashing password:", err);
-         return res.status(500).send("Error hashing password");
-      }
-      return hash;
-   });
+
+async function hashPassword(userPassword) {
+   let hash = await bcrypt.hash(userPassword, saltRounds);
+   return hash;
 }
-
 app.post("/register", async (req, res) => {
-   const hash = await hashPassword(req.body.password);
-   console.log(hash);
-   var userPassword = req.body.password;
+   const hashDone = await hashPassword(req.body.password);
+   console.log(hashDone);
    const { username, email } = req.body;
+   console.log(username);
+   try {
+      const newUser = await Users.create({
+         login: username,
+         password: hashDone,
+         email: email,
+      });
 
-   // bcrypt.hash(userPassword, 10, function (err, hash) {
-   //    if (err) {
-   //       console.error("Error hashing password:", err);
-   //       return res.status(500).send("Error hashing password");
-   //    }
-   //    async function hashDone() {
-   //       const hashPassword = await hash;
-   //       return hashPassword;
-   //    }
-   // });
-
-   // try {
-   //    const newUser = await Users.create({
-   //       login: username,
-   //       password: hash,
-   //       email: email,
-   //    });
-
-   //    res.redirect("/login.html");
-   // } catch (err) {
-   //    // console.error("Error creating user:", err);
-   //    res.status(500).send("Error creating user");
-   // }
+      res.redirect("/login.html");
+   } catch (err) {
+      console.error("Error creating user:", err);
+      res.status(500).send("Error creating user");
+   }
 });
 
 app.post(
