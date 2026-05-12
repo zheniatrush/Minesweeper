@@ -1,35 +1,55 @@
 <!doctype html>
-<html lang="en">
+<html lang="uk">
    <head>
       <meta charset="UTF-8" />
+
+      <link rel="stylesheet" href="css/register.css" />
       <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-      <link rel="stylesheet" href="css/style.css" />
-      <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
-      <title>Сапер</title>
+      <title>Сапер — Вхід</title>
    </head>
-   <body oncontextmenu="return false;">
-      <div class="game_container">
-         <div class="game_menu">
-            <div class="timer" id="timer">00:00</div>
-            <div class="step_counter">0</div>
+   <body>
+      <div class="register-container">
+         <div class="register-header">
+            <div class="mine-icon">💣</div>
+            <h1>Сапер</h1>
+            <p>Увійдіть в акаунт, щоб продовжити гру</p>
          </div>
-         <div class="grid"></div>
+
+         <form method="post" action="/login">
+            <div class="form-group">
+               <label for="username">Нікнейм</label>
+               <input
+                  id="username"
+                  type="text"
+                  name="username"
+                  placeholder="Ваш ігровий нік"
+               />
+            </div>
+
+            <div class="form-group">
+               <label for="password">Пароль</label>
+               <input
+                  id="password"
+                  type="password"
+                  name="password"
+                  placeholder="Ваш пароль"
+               />
+            </div>
+            <div class="error_log"></div>
+            <button type="submit" class="btn-register">Увійти</button>
+         </form>
+
+         <div class="login-link">
+            Ще немає акаунта? <a href="register.html">Зареєструватися</a>
+         </div>
+
+         <div class="decorations">
+            <span>🚩</span>
+            <span>💣</span>
+            <span>1️⃣</span>
+            <span>2️⃣</span>
+            <span>🚩</span>
+         </div>
       </div>
-      <div class="game_over lost">
-         <img src="lost.png" alt="Game Over" />
-         <p>ТИ ПРОГРАВ!</p>
-         <button class="restart_button" onclick="restartGame()">
-            ПЕРЕЗАПУСК
-         </button>
-      </div>
-      <div class="game_over win">
-         <img src="win.png" alt="Game Over" />
-         <p>ТИ ВИГРАВ!</p>
-         <p class="steps"></p>
-         <button class="restart_button" onclick="restartGame()">
-            ПЕРЕЗАПУСК
-         </button>
-      </div>
-      <script src="main.js"></script>
    </body>
 </html>
