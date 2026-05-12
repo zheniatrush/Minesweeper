@@ -1,5 +1,6 @@
 const path = require("path");
-
+const bcrypt = require("bcrypt");
+const saltRounds = 10;
 const db = require("./db");
 const Users = db.users;
 
@@ -38,7 +39,50 @@ passport.use(
       }
    }),
 );
-app.post("/register");
+app.get("/register", function (_, res) {
+   res.sendFile(__dirname + "/register.html");
+});
+function hashPassword(userPassword) {
+   bcrypt.hash(userPassword, 10, function (err, hash) {
+      if (err) {
+         // console.error("Error hashing password:", err);
+         return res.status(500).send("Error hashing password");
+      }
+      return hash;
+   });
+}
+
+app.post("/register", async (req, res) => {
+   const hash = await hashPassword(req.body.password);
+   console.log(hash);
+   var userPassword = req.body.password;
+   const { username, email } = req.body;
+
+   // bcrypt.hash(userPassword, 10, function (err, hash) {
+   //    if (err) {
+   //       console.error("Error hashing password:", err);
+   //       return res.status(500).send("Error hashing password");
+   //    }
+   //    async function hashDone() {
+   //       const hashPassword = await hash;
+   //       return hashPassword;
+   //    }
+   // });
+
+   // try {
+   //    const newUser = await Users.create({
+   //       login: username,
+   //       password: hash,
+   //       email: email,
+   //    });
+
+   //    res.redirect("/login.html");
+   // } catch (err) {
+   //    // console.error("Error creating user:", err);
+   //    res.status(500).send("Error creating user");
+   // }
+});
+
 app.post(
    "/login",
    (req, res, next) => {

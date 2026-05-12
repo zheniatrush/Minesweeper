@@ -9,7 +9,7 @@ module.exports = function (sequelize) {
             primaryKey: true,
          },
          password: {
-            type: Sequelize.STRING(25),
+            type: Sequelize.STRING(255),
          },
          email: {
             type: Sequelize.STRING(50),
