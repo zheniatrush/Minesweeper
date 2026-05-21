@@ -5,20 +5,21 @@
 
       <link rel="stylesheet" href="css/register.css" />
       <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-      <title>Сапер — Реєстрація</title>
+      <title><%=title %></title>
    </head>
    <body>
       <div class="register-container">
          <div class="register-header">
             <div class="mine-icon">💣</div>
             <h1>Сапер</h1>
-            <p>Створіть акаунт, щоб грати</p>
+            <p>Увійдіть в акаунт, щоб продовжити гру</p>
          </div>
 
-         <form method="post" action="/register">
+         <form method="post" action="/login">
             <div class="form-group">
-               <label for="nickname">Нікнейм</label>
+               <label for="username">Нікнейм</label>
                <input
+                  id="username"
                   type="text"
                   name="username"
                   placeholder="Ваш ігровий нік"
@@ -26,36 +27,21 @@
             </div>
 
             <div class="form-group">
-               <label for="email">Email</label>
-               <input
-                  type="email"
-                  name="email"
-                  placeholder="example@mail.com"
-               />
-            </div>
-
-            <div class="form-group">
                <label for="password">Пароль</label>
                <input
+                  id="password"
                   type="password"
                   name="password"
-                  placeholder="Мінімум 6 символів"
+                  placeholder="Ваш пароль"
                />
             </div>
-
-            <div class="form-group">
-               <label for="confirm-password">Підтвердіть пароль</label>
-               <input
-                  type="password"
-                  id="confirm-password"
-                  placeholder="Повторіть пароль"
-               />
-            </div>
-
-            <button type="submit" class="btn-register">Зареєструватися</button>
+            <div class="error_log"></div>
+            <button type="submit" class="btn-register">Увійти</button>
          </form>
 
-         <div class="login-link">Вже є акаунт? <a href="/">Увійти</a></div>
+         <div class="login-link">
+            Ще немає акаунта? <a href="/registration">Зареєструватися</a>
+         </div>
 
          <div class="decorations">
             <span>🚩</span>

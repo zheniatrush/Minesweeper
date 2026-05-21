@@ -10,8 +10,40 @@ const LocalStrategy = require("passport-local");
 
 const express = require("express");
 const session = require("express-session");
-
+var router = express.Router();
 const app = express();
+
+//=================================== EJS ==========================================
+
+app.set("view engine", "ejs");
+
+app.use("/contact", function (request, response) {
+   response.render("contact", {
+      title: "Мои контакты",
+      emailsVisible: true,
+      emails: ["gavgav@mycorp.com", "mioaw@mycorp.com"],
+      phone: "+1234567890",
+   });
+});
+app.use("/play", function (request, response) {
+   response.render("play", {
+      title: "Сапер",
+   });
+});
+app.use("/signup", function (request, response) {
+   response.render("signup", {
+      title: "Сапер — Вхід",
+   });
+});
+app.use("/registration", function (request, response) {
+   response.render("registration", {
+      title: "Сапер — Реєстрація",
+   });
+});
+
+app.listen(3000);
+
+//=================================== EJS END ==========================================
 
 app.use(express.urlencoded({ extended: false }));
 
@@ -26,9 +58,14 @@ app.use(
 app.use(passport.initialize());
 app.use(passport.session());
 
-app.get("/game.html", checkAuthentication, function (req, res) {
-   res.sendFile(path.join(__dirname, "public", "game.html"));
+router.get("/play.ejs", checkAuthentication, function (req, res) {
+   res.sendFile(path.join(__dirname, "views", "play.ejs"));
+   console.log("GET /game.html спрацював");
 });
+
+// =============================== checkAuthentication ==========================================
+
+// =============================== checkAuthentication END ==========================================
 
 app.use(express.static(path.join(__dirname, "public")));
 //let errorText = document.querySelector(".error_log");
@@ -45,10 +82,6 @@ passport.use(
                login: username,
             },
          });
-
-         //  console.log("username:", username);
-         // console.log("findUsers:", findUsers);
-
          if (!findUsers) {
             return cb(null, false, {
                message: "Неправильний логін або пароль!",
@@ -58,7 +91,6 @@ passport.use(
             password,
             findUsers.password,
          );
-
          if (!isPasswordValid) {
             return cb(null, false, {
                message: "Неправильний логін або пароль!",
@@ -80,7 +112,7 @@ passport.deserializeUser(function (user, done) {
 });
 
 app.get("/register", function (_, res) {
-   res.sendFile(__dirname + "/register.html");
+   res.sendFile(__dirname + "/registration");
 });
 
 async function hashPassword(userPassword) {
@@ -97,7 +129,7 @@ app.post("/register", async (req, res) => {
          email: email,
       });
 
-      res.redirect("/login.html");
+      res.redirect("/signup");
    } catch (err) {
       console.error("Error creating user:", err);
       res.status(500).send("Error creating user");
@@ -114,8 +146,8 @@ app.post(
 
    passport.authenticate("local", {
       session: true,
-      successRedirect: "/game.html",
-      failureRedirect: "/login.html?error=1",
+      successRedirect: "/play",
+      failureRedirect: "/signup?error=1",
    }),
 );
 
@@ -124,6 +156,7 @@ function checkAuthentication(req, res, next) {
       console.log(req.isAuthenticated());
       next();
    } else {
+      console.log("Ти  лох");
       res.redirect("/login.html");
    }
 }
