@@ -15,6 +15,17 @@
          </div>
          <div class="grid"></div>
       </div>
+      <% if (isAdmin === 'admin') { %>
+      <div class="admin-panel">
+         <button>Удалить пользователя</button>
+         <a href="/admin-logs">Журнал ошибок</a>
+      </div>
+      <% } else if (isAdmin === 'user') { %>
+      <div class="moderator-panel">
+         <p>Добро пожаловать, пользователь!</p>
+      </div>
+      <% } %>
+      
       <div class="game_over lost">
          <img src="lost.png" alt="Game Over" />
          <p>ТИ ПРОГРАВ!</p>

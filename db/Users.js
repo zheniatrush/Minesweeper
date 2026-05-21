@@ -14,6 +14,9 @@ module.exports = function (sequelize) {
          email: {
             type: Sequelize.STRING(50),
          },
+         role: {
+            type: Sequelize.STRING(5),
+         },
       },
       {
          tableName: "Users",

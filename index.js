@@ -12,39 +12,6 @@ const express = require("express");
 const session = require("express-session");
 var router = express.Router();
 const app = express();
-
-//=================================== EJS ==========================================
-
-app.set("view engine", "ejs");
-
-app.use("/contact", function (request, response) {
-   response.render("contact", {
-      title: "Мои контакты",
-      emailsVisible: true,
-      emails: ["gavgav@mycorp.com", "mioaw@mycorp.com"],
-      phone: "+1234567890",
-   });
-});
-app.use("/play", function (request, response) {
-   response.render("play", {
-      title: "Сапер",
-   });
-});
-app.use("/signup", function (request, response) {
-   response.render("signup", {
-      title: "Сапер — Вхід",
-   });
-});
-app.use("/registration", function (request, response) {
-   response.render("registration", {
-      title: "Сапер — Реєстрація",
-   });
-});
-
-app.listen(3000);
-
-//=================================== EJS END ==========================================
-
 app.use(express.urlencoded({ extended: false }));
 
 app.use(
@@ -57,11 +24,6 @@ app.use(
 
 app.use(passport.initialize());
 app.use(passport.session());
-
-router.get("/play.ejs", checkAuthentication, function (req, res) {
-   res.sendFile(path.join(__dirname, "views", "play.ejs"));
-   console.log("GET /game.html спрацював");
-});
 
 // =============================== checkAuthentication ==========================================
 
@@ -119,6 +81,11 @@ async function hashPassword(userPassword) {
    let hash = await bcrypt.hash(userPassword, saltRounds);
    return hash;
 }
+function isAdmin(userRole) {
+   let roles = userRole;
+   return roles;
+}
+
 app.post("/register", async (req, res) => {
    const hashDone = await hashPassword(req.body.password);
    const { username, email } = req.body;
@@ -157,10 +124,53 @@ function checkAuthentication(req, res, next) {
       next();
    } else {
       console.log("Ти  лох");
-      res.redirect("/login.html");
+      res.redirect("/signup");
    }
 }
 
+// function isAdmin(req, res, next) {
+//    if (req.isAuthenticated() && req.user.role === "admin") {
+//       console.log("Ти адмін");
+//       next();
+//    } else {
+//       console.log("Доступ заборонено");
+//    }
+// }
+//=================================== EJS ==========================================
+
+app.set("view engine", "ejs");
+
+app.use("/contact", function (request, response) {
+   response.render("contact", {
+      title: "Мои контакты",
+      emailsVisible: true,
+      emails: ["gavgav@mycorp.com", "mioaw@mycorp.com"],
+      phone: "+1234567890",
+   });
+});
+app.get("/play", checkAuthentication, function (req, res) {
+   console.log("GET /play спрацював");
+
+   res.render("play", {
+      title: "Сапер",
+      isAdmin: isAdmin(req.user.role),
+   });
+});
+app.use("/signup", function (request, response) {
+   response.render("signup", {
+      title: "Сапер — Вхід",
+   });
+});
+app.use("/registration", function (request, response) {
+   response.render("registration", {
+      title: "Сапер — Реєстрація",
+   });
+});
+app.get("/game.html", function (req, res) {
+   res.redirect("/play");
+   console.log("GET /game.html спрацював");
+});
+//=================================== EJS END ==========================================
 app.listen(3000, () => {
    console.log("Server started on http://localhost:3000");
 });
