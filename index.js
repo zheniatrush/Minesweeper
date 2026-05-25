@@ -12,6 +12,7 @@ const express = require("express");
 const session = require("express-session");
 var router = express.Router();
 const app = express();
+app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
 app.use(
@@ -128,14 +129,14 @@ function checkAuthentication(req, res, next) {
    }
 }
 
-// function isAdmin(req, res, next) {
-//    if (req.isAuthenticated() && req.user.role === "admin") {
-//       console.log("Ти адмін");
-//       next();
-//    } else {
-//       console.log("Доступ заборонено");
-//    }
-// }
+async function getAllUsers() {
+   const allUsers = await Users.findAll({
+      attributes: ["login", "id", "role"],
+   });
+
+   return allUsers.map((user) => user.toJSON());
+}
+
 //=================================== EJS ==========================================
 
 app.set("view engine", "ejs");
@@ -148,12 +149,13 @@ app.use("/contact", function (request, response) {
       phone: "+1234567890",
    });
 });
-app.get("/play", checkAuthentication, function (req, res) {
-   console.log("GET /play спрацював");
+app.get("/play", checkAuthentication, async function (req, res) {
+   const users = await getAllUsers();
 
    res.render("play", {
       title: "Сапер",
       isAdmin: isAdmin(req.user.role),
+      userlist: users,
    });
 });
 app.use("/signup", function (request, response) {
@@ -170,7 +172,39 @@ app.get("/game.html", function (req, res) {
    res.redirect("/play");
    console.log("GET /game.html спрацював");
 });
+
+app.post("/make-admin", async (req, res) => {
+   try {
+      const userId = req.body.id;
+
+      await Users.update(
+         { role: "admin" },
+         {
+            where: {
+               id: userId,
+            },
+         },
+      );
+   } catch (error) {
+      console.error(error);
+   }
+});
+
+app.post("/delete-user", async (req, res) => {
+   try {
+      const userId = req.body.id;
+
+      await Users.destroy({
+         where: {
+            id: userId,
+         },
+      });
+   } catch (error) {
+      console.error(error);
+   }
+});
 //=================================== EJS END ==========================================
+
 app.listen(3000, () => {
    console.log("Server started on http://localhost:3000");
 });

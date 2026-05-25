@@ -8,6 +8,53 @@
       <title><%=title %></title>
    </head>
    <body oncontextmenu="return false;">
+
+       <aside class="sidebar">
+         <div class="sidebar-logo">
+            <div class="mine-icon">💣</div>
+            <h1>Сапер</h1>
+            <% if (isAdmin === 'admin') { %>
+            <p>Адмін-панель</p>
+            <% } else if (isAdmin === 'user') { %>
+            <p>Користувач</p>
+            <% } %>
+         </div>
+
+         <nav class="sidebar-menu">
+            <a href="#" class="sidebar-link active">
+               <span>🎮</span>
+               <span>Гра</span>
+            </a>
+            <% if (isAdmin === 'admin') { %>
+            <div class="sidebar-dropdown">
+            <a href="#" class="sidebar-link sidebar-dropdown-toggle">
+               <span>👤</span>
+               <span>Користувачі</span>
+               <span class="dropdown-arrow">▾</span>
+            </a>
+
+            <div class="sidebar-submenu">
+               <a href="#" class="sidebar-submenu-link" id="openUsersPopup">
+                  <span>✏️</span>
+                  <span>Редагувати користувача</span>
+               </a>
+            </div>
+         </div>
+            <% } %>
+            <a href="#" class="sidebar-link">
+               <span>⚙️</span>
+               <span>Налаштування</span>
+            </a>
+         </nav>
+
+         <div class="sidebar-footer">
+            <a href="#" class="logout-link">
+               <span>🚪</span>
+               <span>Вийти</span>
+            </a>
+         </div>
+      </aside>
+
       <div class="game_container">
          <div class="game_menu">
             <div class="timer" id="timer">00:00</div>
@@ -15,17 +62,6 @@
          </div>
          <div class="grid"></div>
       </div>
-      <% if (isAdmin === 'admin') { %>
-      <div class="admin-panel">
-         <button>Удалить пользователя</button>
-         <a href="/admin-logs">Журнал ошибок</a>
-      </div>
-      <% } else if (isAdmin === 'user') { %>
-      <div class="moderator-panel">
-         <p>Добро пожаловать, пользователь!</p>
-      </div>
-      <% } %>
-      
       <div class="game_over lost">
          <img src="lost.png" alt="Game Over" />
          <p>ТИ ПРОГРАВ!</p>
@@ -41,6 +77,45 @@
             ПЕРЕЗАПУСК
          </button>
       </div>
-      <script src="main.js"></script>
+      
    </body>
+   <div class="users-popup" id="usersPopup">
+   <div class="users-popup__overlay" id="closeUsersPopup"></div>
+
+   <div class="users-popup__content">
+      <div class="users-popup__header">
+         <h2>Список користувачів</h2>
+         <button type="button" class="users-popup__close" id="closeUsersPopupBtn">
+            ×
+         </button>
+      </div>
+
+      <div class="users-list">
+         
+      </div>
+   </div>
+</div>
+<script>
+   const userlist = <%- JSON.stringify(userlist) %>;
+   const openUsersPopup = document.getElementById("openUsersPopup");
+   const usersPopup = document.getElementById("usersPopup");
+   const closeUsersPopup = document.getElementById("closeUsersPopup");
+   const closeUsersPopupBtn = document.getElementById("closeUsersPopupBtn");
+
+   openUsersPopup.addEventListener("click", function (event) {
+      event.preventDefault();
+      usersPopup.classList.add("active");
+   });
+
+   closeUsersPopup.addEventListener("click", function () {
+      usersPopup.classList.remove("active");
+   });
+
+   closeUsersPopupBtn.addEventListener("click", function () {
+      usersPopup.classList.remove("active");
+   });
+   console.log("userlist:", userlist);
+
+</script>
+<script src="main.js"></script>
 </html>

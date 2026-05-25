@@ -210,3 +210,63 @@ cells.forEach(function (cell) {
       }
    });
 });
+
+function ViewAllUsers(userlist) {
+   let listUsers = ``;
+   userlist.forEach((user) => {
+      listUsers += `
+      <div class="user-card">
+            <div class="user-card__info">
+               <div class="user-card__avatar">A</div>
+               <div>
+                  <h3>${user.login}</h3>
+                  <p>${user.role}</p>
+               </div>
+            </div>
+
+            <div class="user-card__actions">
+               <button type="button" class="btn-admin" data-user-id="${user.id}" name="make-admin">Додати адмін права</button>
+               <button type="button" class="btn-delete" data-user-id="${user.id}" name="delete-user">Видалити</button>
+            </div>
+         </div>
+      `;
+   });
+   document.querySelector(".users-list").innerHTML = listUsers;
+}
+ViewAllUsers(userlist);
+
+document.addEventListener("click", async function (event) {
+   if (event.target.classList.contains("btn-admin")) {
+      const userId = event.target.dataset.userId;
+
+      const response = await fetch("/make-admin", {
+         method: "POST",
+         headers: {
+            "Content-Type": "application/json",
+         },
+         body: JSON.stringify({
+            id: userId,
+         }),
+      });
+
+      const result = await response.json();
+      console.log(result);
+   }
+
+   if (event.target.classList.contains("btn-delete")) {
+      const userId = event.target.dataset.userId;
+
+      const response = await fetch("/delete-user", {
+         method: "POST",
+         headers: {
+            "Content-Type": "application/json",
+         },
+         body: JSON.stringify({
+            id: userId,
+         }),
+      });
+
+      const result = await response.json();
+      console.log(result);
+   }
+});
