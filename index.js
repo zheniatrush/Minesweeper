@@ -10,6 +10,7 @@ const LocalStrategy = require("passport-local");
 
 const express = require("express");
 const session = require("express-session");
+
 var router = express.Router();
 const app = express();
 app.use(express.json());
@@ -87,6 +88,10 @@ function isAdmin(userRole) {
    return roles;
 }
 
+function ActualUser(userName) {
+   let onlineUser = userName;
+   return onlineUser;
+}
 app.post("/register", async (req, res) => {
    const hashDone = await hashPassword(req.body.password);
    const { username, email } = req.body;
@@ -141,20 +146,12 @@ async function getAllUsers() {
 
 app.set("view engine", "ejs");
 
-app.use("/contact", function (request, response) {
-   response.render("contact", {
-      title: "Мои контакты",
-      emailsVisible: true,
-      emails: ["gavgav@mycorp.com", "mioaw@mycorp.com"],
-      phone: "+1234567890",
-   });
-});
 app.get("/play", checkAuthentication, async function (req, res) {
    const users = await getAllUsers();
-
    res.render("play", {
       title: "Сапер",
       isAdmin: isAdmin(req.user.role),
+      actualUser: ActualUser(req.user.login),
       userlist: users,
    });
 });
@@ -199,12 +196,17 @@ app.post("/delete-user", async (req, res) => {
             id: userId,
          },
       });
+      res.send("User deleted successfully");
    } catch (error) {
       console.error(error);
    }
 });
 //=================================== EJS END ==========================================
-
+app.post("/logout-user", (req, res, next) => {
+   console.log("POST /logout-user спрацював");
+   req.session.destroy();
+   res.redirect("/signup");
+});
 app.listen(3000, () => {
    console.log("Server started on http://localhost:3000");
 });

@@ -270,3 +270,14 @@ document.addEventListener("click", async function (event) {
       console.log(result);
    }
 });
+const ButtonLogout = document.querySelector(".logout-link");
+ButtonLogout.addEventListener("click", async function () {
+   const response = await fetch("/logout-user", {
+      method: "POST",
+      headers: {
+         "Content-Type": "application/json",
+      },
+   });
+   const result = await response.json();
+   console.log(result);
+});

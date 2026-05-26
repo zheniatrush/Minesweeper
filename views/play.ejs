@@ -16,7 +16,7 @@
             <% if (isAdmin === 'admin') { %>
             <p>Адмін-панель</p>
             <% } else if (isAdmin === 'user') { %>
-            <p>Користувач</p>
+            <p>Користувач: <%= actualUser %></p>
             <% } %>
          </div>
 
@@ -41,17 +41,17 @@
             </div>
          </div>
             <% } %>
-            <a href="#" class="sidebar-link">
+            <!-- <a href="#" class="sidebar-link">
                <span>⚙️</span>
                <span>Налаштування</span>
-            </a>
+            </a> -->
          </nav>
 
          <div class="sidebar-footer">
-            <a href="#" class="logout-link">
+            <button type="button" class="logout-link" name="logout-user" >
                <span>🚪</span>
                <span>Вийти</span>
-            </a>
+            </button>
          </div>
       </aside>
 

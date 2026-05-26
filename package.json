@@ -1,6 +1,7 @@
 {
    "scripts": {
-      "start": "node index.js"
+      "start": "node index.js",
+      "dev": "nodemon index.js"
    },
    "dependencies": {
       "bcrypt": "^6.0.0",
@@ -12,5 +13,8 @@
       "passport": "^0.7.0",
       "passport-local": "^1.0.0",
       "sequelize": "^6.37.8"
+   },
+   "devDependencies": {
+      "nodemon": "^3.1.14"
    }
 }
