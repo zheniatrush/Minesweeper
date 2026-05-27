@@ -3,7 +3,7 @@ const bcrypt = require("bcrypt");
 const saltRounds = 10;
 
 const db = require("./db");
-const Users = db.users;
+const Users = db.Users;
 
 const passport = require("passport");
 const LocalStrategy = require("passport-local");
@@ -153,6 +153,14 @@ app.get("/play", checkAuthentication, async function (req, res) {
       isAdmin: isAdmin(req.user.role),
       actualUser: ActualUser(req.user.login),
       userlist: users,
+   });
+});
+
+app.get("/lobby", checkAuthentication, async function (req, res) {
+   res.render("lobby", {
+      title: "Ігрові лобі",
+      isAdmin: isAdmin(req.user.role),
+      actualUser: ActualUser(req.user.login),
    });
 });
 app.use("/signup", function (request, response) {

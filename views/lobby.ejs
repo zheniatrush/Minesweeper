@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="uk">
+   <head>
+      <meta charset="UTF-8" />
+      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="stylesheet" href="css/style.css" />
+      <title><%=title %></title>
+   </head>
+   <body>
+      <div class="admin-layout">
+         <aside class="sidebar">
+            <div>
+               <div class="sidebar-logo">
+                  <div class="mine-icon">💣</div>
+                  <h1>Сапер</h1>
+                  <p>Адмін-панель</p>
+               </div>
+
+               <nav class="sidebar-menu">
+                  <a href="/play" class="sidebar-link">
+                     <span>🎮</span>
+                     <span>Гра</span>
+                  </a>
+
+                  <a href="/lobby" class="sidebar-link active">
+                     <span>🏠</span>
+                     <span>Лобі</span>
+                  </a>
+               </nav>
+            </div>
+
+            <div class="sidebar-footer">
+               <a href="#" class="logout-link">
+                  <span>🚪</span>
+                  <span>Вийти</span>
+               </a>
+            </div>
+         </aside>
+
+         <main class="admin-main">
+            <header class="admin-header">
+               <div>
+                  <h2>Ігрові лобі</h2>
+                  <p>Оберіть доступне лобі та приєднайтесь до гри</p>
+               </div>
+
+               <div class="admin-user">
+                  <div>
+                     <strong><%=actualUser %></strong>
+                     <span>Гравець</span>
+                  </div>
+                  <div class="admin-avatar"><%=actualUser.charAt(0) %></div>
+               </div>
+            </header>
+
+            <section class="lobbies">
+               <div class="lobby-card">
+                  <div class="lobby-card__top">
+                     <div class="lobby-card__icon">💣</div>
+                     <span class="lobby-card__status">Очікує</span>
+                  </div>
+
+                  <div class="lobby-card__content">
+                     <h3>Лобі #1</h3>
+                     <p>Гравців: 1 / 2</p>
+                  </div>
+
+                  <button class="btn-join">Приєднатися</button>
+               </div>
+
+               <div class="lobby-card">
+                  <div class="lobby-card__top">
+                     <div class="lobby-card__icon">🚩</div>
+                     <span class="lobby-card__status">Очікує</span>
+                  </div>
+
+                  <div class="lobby-card__content">
+                     <h3>Лобі #2</h3>
+                     <p>Гравців: 1 / 2</p>
+                  </div>
+
+                  <button class="btn-join">Приєднатися</button>
+               </div>
+
+               <div class="lobby-card">
+                  <div class="lobby-card__top">
+                     <div class="lobby-card__icon">⚡</div>
+                     <span class="lobby-card__status">Очікує</span>
+                  </div>
+
+                  <div class="lobby-card__content">
+                     <h3>Лобі #3</h3>
+                     <p>Гравців: 1 / 2</p>
+                  </div>
+
+                  <button class="btn-join">Приєднатися</button>
+               </div>
+            </section>
+         </main>
+      </div>
+   </body>
+</html>
