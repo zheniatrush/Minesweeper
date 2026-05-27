@@ -4,6 +4,7 @@ const saltRounds = 10;
 
 const db = require("./db");
 const Users = db.Users;
+const Lobby = db.Lobby;
 
 const passport = require("passport");
 const LocalStrategy = require("passport-local");
@@ -163,6 +164,15 @@ app.get("/lobby", checkAuthentication, async function (req, res) {
       actualUser: ActualUser(req.user.login),
    });
 });
+
+app.get("/lobby/play", checkAuthentication, async function (req, res) {
+   res.render("lobby/play", {
+      title: "Ігрові лобі",
+      isAdmin: isAdmin(req.user.role),
+      actualUser: ActualUser(req.user.login),
+   });
+});
+
 app.use("/signup", function (request, response) {
    response.render("signup", {
       title: "Сапер — Вхід",
@@ -215,6 +225,24 @@ app.post("/logout-user", (req, res, next) => {
    req.session.destroy();
    res.redirect("/signup");
 });
+
+app.post("/go-to-lobby", async (req, res, next) => {
+   try {
+      const actualUser = req.user.login;
+      console.log("actualUser:", actualUser);
+
+      await Lobby.create({
+         first_player: actualUser,
+         player_count: 1,
+      });
+   } catch (error) {
+      console.error(error);
+   }
+   res.redirect("/lobby/play");
+});
+
+// =================================== LOBBY START ==========================================
+
 app.listen(3000, () => {
    console.log("Server started on http://localhost:3000");
 });

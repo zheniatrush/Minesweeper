@@ -13,4 +13,4 @@ module.exports = {
    Users,
    Lobby,
 };
-sequelize.sync();
+// sequelize.sync();

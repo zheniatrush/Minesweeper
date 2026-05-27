@@ -123,7 +123,9 @@ function generateCells(Cells) {
       });
    });
 }
-generateCells(gameCells);
+if (typeof userlist !== "undefined") {
+   generateCells(gameCells);
+}
 
 var cells = document.querySelectorAll(".cell");
 var popupGameOver = document.querySelector(".game_over.lost");
@@ -233,7 +235,9 @@ function ViewAllUsers(userlist) {
    });
    document.querySelector(".users-list").innerHTML = listUsers;
 }
-ViewAllUsers(userlist);
+if (typeof userlist !== "undefined") {
+   ViewAllUsers(userlist);
+}
 
 document.addEventListener("click", async function (event) {
    if (event.target.classList.contains("btn-admin")) {
@@ -281,3 +285,15 @@ ButtonLogout.addEventListener("click", async function () {
    const result = await response.json();
    console.log(result);
 });
+
+// const ButtonGoLobby = document.querySelector(".btn-join");
+// ButtonGoLobby.addEventListener("click", async function () {
+//    const response = await fetch("/go-to-lobby", {
+//       method: "POST",
+//       headers: {
+//          "Content-Type": "application/json",
+//       },
+//    });
+//    const result = await response.json();
+//    console.log(result);
+// });

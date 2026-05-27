@@ -9,27 +9,27 @@ module.exports = function (sequelize) {
       },
       lobby_name: {
          type: Sequelize.STRING(50),
-         allowNull: false,
+         allowNull: true,
       },
       first_player: {
          type: Sequelize.STRING(25),
-         allowNull: false,
+         allowNull: true,
       },
       second_player: {
          type: Sequelize.STRING(25),
-         allowNull: false,
+         allowNull: true,
       },
       game_state: {
          type: Sequelize.STRING(20),
-         allowNull: false,
+         allowNull: true,
       },
       first_player_json: {
          type: Sequelize.JSON,
-         allowNull: false,
+         allowNull: true,
       },
       second_player_json: {
          type: Sequelize.JSON,
-         allowNull: false,
+         allowNull: true,
       },
       winner: {
          type: Sequelize.STRING(50),
@@ -37,23 +37,23 @@ module.exports = function (sequelize) {
       },
       counter_one: {
          type: Sequelize.INTEGER,
-         allowNull: false,
+         allowNull: true,
       },
       counter_two: {
          type: Sequelize.INTEGER,
-         allowNull: false,
+         allowNull: true,
       },
       timer_one: {
          type: Sequelize.TIME,
-         allowNull: false,
+         allowNull: true,
       },
       timer_two: {
          type: Sequelize.TIME,
-         allowNull: false,
+         allowNull: true,
       },
       player_count: {
          type: Sequelize.INTEGER,
-         allowNull: false,
+         allowNull: true,
       },
    });
 };

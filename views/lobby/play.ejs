@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+   <head>
+      <meta charset="UTF-8" />
+      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="stylesheet" href="../css/style.css" />
+      <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
+      <title><%=title %></title>
+   </head>
+   <body oncontextmenu="return false;">
+
+       <aside class="sidebar">
+         <div class="sidebar-logo">
+            <div class="mine-icon">💣</div>
+            <h1>Сапер</h1>
+            <% if (isAdmin === 'admin') { %>
+            <p>Адмін-панель</p>
+            <% } else if (isAdmin === 'user') { %>
+            <p>Користувач: <%= actualUser %></p>
+            <% } %>
+         </div>
+
+         <nav class="sidebar-menu">
+            <a href="#" class="sidebar-link active">
+               <span>🎮</span>
+               <span>Гра</span>
+            </a>
+            <a href="/lobby" class="sidebar-link active">
+                     <span>🏠</span>
+                     <span>Лобі</span>
+                  </a>
+            <!-- <a href="#" class="sidebar-link">
+               <span>⚙️</span>
+               <span>Налаштування</span>
+            </a> -->
+         </nav>
+
+         <div class="sidebar-footer">
+            <button type="button" class="logout-link" name="logout-user" >
+               <span>🚪</span>
+               <span>Вийти</span>
+            </button>
+         </div>
+      </aside>
+
+      <div class="game_container">
+         <div class="game_menu">
+            <div class="timer" id="timer">00:00</div>
+            <div class="step_counter">0</div>
+         </div>
+         <div class="grid"></div>
+      </div>
+      <div class="game_over lost">
+         <img src="../lost.png" alt="Game Over" />
+         <p>ТИ ПРОГРАВ!</p>
+         <button class="restart_button" onclick="restartGame()">
+            ПЕРЕЗАПУСК
+         </button>
+      </div>
+      <div class="game_over win">
+         <img src="../win.png" alt="Game Over" />
+         <p>ТИ ВИГРАВ!</p>
+         <p class="steps"></p>
+         <button class="restart_button" onclick="restartGame()">
+            ПЕРЕЗАПУСК
+         </button>
+      </div>
+      
+   </body>
+   
+<script src="../main.js"></script>
+</html>
