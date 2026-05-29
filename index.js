@@ -226,19 +226,48 @@ app.post("/logout-user", (req, res, next) => {
    res.redirect("/signup");
 });
 
-app.post("/go-to-lobby", async (req, res, next) => {
+app.post("/go-to-lobby", async (req, res) => {
    try {
       const actualUser = req.user.login;
-      console.log("actualUser:", actualUser);
 
-      await Lobby.create({
-         first_player: actualUser,
-         player_count: 1,
+      const existingLobby = await Lobby.findOne({
+         where: {
+            first_player: actualUser,
+         },
       });
+
+      if (existingLobby) {
+         console.log("Користувач вже знаходиться в лобі");
+         await Lobby.update(
+            {
+               second_player: actualUser,
+               player_count: 2,
+            },
+            {
+               where: {
+                  lobby_id: 1,
+               },
+            },
+         );
+      }
+
+      await Lobby.update(
+         {
+            first_player: actualUser,
+            player_count: 1,
+         },
+         {
+            where: {
+               lobby_id: 1,
+            },
+         },
+      );
+
+      return res.redirect("/lobby/play");
    } catch (error) {
       console.error(error);
+      return res.status(500).send("Помилка сервера");
    }
-   res.redirect("/lobby/play");
 });
 
 // =================================== LOBBY START ==========================================
