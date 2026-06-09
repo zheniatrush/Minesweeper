@@ -8,10 +8,12 @@ const passport = require("passport");
 
 const express = require("express");
 const session = require("express-session");
-
+const http = require("http");
 var router = express.Router();
 const app = express();
-
+const server = http.createServer(app);
+const initSocket = require("./socket.server");
+initSocket(server);
 const checkAuthentication = require("./middlewares/authMiddleware");
 const configurePassport = require("./config/passport");
 configurePassport(passport);
@@ -37,7 +39,7 @@ const pageRoutes = require("./routes/page.routes");
 app.use("/", pageRoutes);
 
 app.use(express.static(path.join(__dirname, "public")));
-
+const { Op } = require("sequelize");
 //=================================== EJS ==========================================
 
 app.set("view engine", "ejs");
@@ -84,18 +86,29 @@ app.post("/go-to-lobby", async (req, res) => {
    try {
       const actualUser = req.user.login;
 
-      const existingLobby = await Lobby.findOne({
+      const lobby = await Lobby.findOne({
          where: {
-            first_player: actualUser,
+            lobby_id: 1,
          },
       });
 
-      if (existingLobby) {
-         console.log("Користувач вже знаходиться в лобі");
+      if (!lobby) {
+         return res.status(404).send("Лобі не знайдено");
+      }
+
+      if (
+         lobby.first_player === actualUser ||
+         lobby.second_player === actualUser
+      ) {
+         return res.redirect("/lobby/play");
+      }
+
+      if (!lobby.first_player) {
          await Lobby.update(
             {
-               second_player: actualUser,
-               player_count: 2,
+               first_player: actualUser,
+               player_count: 1,
+               game_state: "waiting",
             },
             {
                where: {
@@ -103,21 +116,28 @@ app.post("/go-to-lobby", async (req, res) => {
                },
             },
          );
+
+         return res.redirect("/lobby/play");
       }
 
-      await Lobby.update(
-         {
-            first_player: actualUser,
-            player_count: 1,
-         },
-         {
-            where: {
-               lobby_id: 1,
+      if (!lobby.second_player) {
+         await Lobby.update(
+            {
+               second_player: actualUser,
+               player_count: 2,
+               game_state: "active",
             },
-         },
-      );
+            {
+               where: {
+                  lobby_id: 1,
+               },
+            },
+         );
 
-      return res.redirect("/lobby/play");
+         return res.redirect("/lobby/play");
+      }
+
+      return res.send("Лобі вже заповнене");
    } catch (error) {
       console.error(error);
       return res.status(500).send("Помилка сервера");
@@ -126,6 +146,6 @@ app.post("/go-to-lobby", async (req, res) => {
 
 // =================================== LOBBY START ==========================================
 
-app.listen(3000, () => {
+server.listen(3000, () => {
    console.log("Server started on http://localhost:3000");
 });

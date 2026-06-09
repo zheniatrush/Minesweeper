@@ -40,7 +40,7 @@ body {
 .game_container {
    position: absolute;
    top: 50%;
-   left: calc(260px + (100vw - 260px) / 2);
+   left: calc(260px + (100vw - 400px) / 2);
    transform: translate(-50%, -50%);
    padding: 10px;
    background-color: #464e56;
@@ -48,6 +48,9 @@ body {
    border-left: 4px solid #ffffff;
    border-bottom: 4px solid #7b7b7b;
    border-right: 4px solid #7b7b7b;
+}
+.game_container.multiplayer {
+   left: calc(260px + (100vw - 400px) / 2 + 300px);
 }
 .game_menu {
    display: flex;

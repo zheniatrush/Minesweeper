@@ -1,3 +1,11 @@
+const socket = io();
+socket.on("connect", () => {
+   console.log("Socket connected:", socket.id);
+
+   socket.emit("join-lobby", {
+      lobbyId: 1,
+   });
+});
 min = 0;
 hour = 0;
 //Оставляем вашу функцию
@@ -76,6 +84,7 @@ for (let i = 0; i < row; i++) {
          bombsCounts: 0,
          index: counter,
          class: "active",
+         status: "closed",
       });
       counter++;
       if (bombs.includes(counter)) {
@@ -116,18 +125,33 @@ for (let i = 0; i < row; i++) {
 }
 function generateCells(Cells) {
    let template = ``;
+
    Cells.forEach((row) => {
       row.forEach((Cell) => {
-         template += `<div class="cell size closed" data-row="${Cell.row}" data-column="${Cell.column}" data-index="${Cell.class}" data-number="${Cell.bombsCounts}">${Cell.bombsCounts}</div>`;
-         document.querySelector(".grid").innerHTML = template;
+         template += `
+            <div 
+               class="cell size ${Cell.status}" 
+               data-row="${Cell.row}" 
+               data-column="${Cell.column}" 
+               data-index="${Cell.class}" 
+               data-number="${Cell.bombsCounts}"
+            >
+               ${Cell.bombsCounts}
+            </div>
+         `;
       });
    });
+
+   document.querySelector(".player-grid").innerHTML = template;
 }
-if (typeof userlist !== "undefined") {
+
+const grid = document.querySelector(".player-grid");
+
+if (grid) {
    generateCells(gameCells);
 }
 
-var cells = document.querySelectorAll(".cell");
+var cells = document.querySelectorAll(".player-grid .cell");
 var popupGameOver = document.querySelector(".game_over.lost");
 var popupGameWin = document.querySelector(".game_over.win");
 function checkWin() {
@@ -176,8 +200,11 @@ cells.forEach(function (cell) {
          popupGameOver.style.display = "flex";
       } else {
          if (currentData.bombsCounts !== "") {
+            currentData.status = "opened";
+
             elt.classList.remove("closed");
             elt.classList.add("opened");
+            sendBoardUpdate();
             checkWin();
             return;
          }
@@ -199,15 +226,20 @@ cells.forEach(function (cell) {
                      targetCell.class !== "bomb" &&
                      targetCell.bombsCounts === ""
                   ) {
+                     targetCell.status = "opened";
                      CellsOpened.classList.add("opened");
                      CellsOpened.classList.remove("closed");
+                     sendBoardUpdate();
                      checkWin();
                   }
                }
             }
          }
+
          elt.classList.remove("closed");
+         currentData.status = "opened";
          elt.classList.add("opened");
+         sendBoardUpdate();
          checkWin();
       }
    });
@@ -297,3 +329,55 @@ ButtonLogout.addEventListener("click", async function () {
 //    const result = await response.json();
 //    console.log(result);
 // });
+
+function getBoardFromDOM() {
+   const cells = document.querySelectorAll(".grid .cell");
+   const board = [];
+
+   cells.forEach((cell) => {
+      let status = cell.classList.contains("opened") ? "opened" : "closed";
+      board.push({
+         row: Number(cell.dataset.row),
+         column: Number(cell.dataset.column),
+         class: cell.dataset.index,
+         bombsCounts: cell.dataset.number,
+         status: status,
+      });
+   });
+
+   return board;
+}
+getBoardFromDOM();
+console.log(getBoardFromDOM());
+
+function sendBoardUpdate() {
+   socket.emit("first-player-board:update", {
+      lobbyId: 1,
+      board: gameCells,
+   });
+}
+
+socket.on("first-player-board:receive", (data) => {
+   generateCellsMultiplayer(data.board);
+});
+function generateCellsMultiplayer(Cells) {
+   let template = ``;
+
+   Cells.forEach((row) => {
+      row.forEach((Cell) => {
+         template += `
+            <div 
+               class="cell size ${Cell.status}" 
+               data-row="${Cell.row}" 
+               data-column="${Cell.column}" 
+               data-index="${Cell.class}" 
+               data-number="${Cell.bombsCounts}"
+            >
+               ${Cell.bombsCounts}
+            </div>
+         `;
+      });
+   });
+
+   document.querySelector(".grid.multiplayer").innerHTML = template;
+}
