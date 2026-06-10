@@ -1,11 +1,41 @@
 const socket = io();
-socket.on("connect", () => {
-   console.log("Socket connected:", socket.id);
-
-   socket.emit("join-lobby", {
-      lobbyId: 1,
+let myClientSocketId = null;
+const socketConnected = new Promise((resolve) => {
+   socket.on("connect", () => {
+      console.log("Socket connected:", socket.id);
+      socket.emit("join-lobby", {
+         lobbyId: 1,
+      });
+      myClientSocketId = socket.id;
+      resolve();
    });
 });
+
+async function getMySocketId() {
+   await socketConnected.then(() => {
+      console.log("Мій Socket IDqweqweqweqwe:", myClientSocketId);
+
+      try {
+         let dataSocektId = document.querySelector("[data-socket-id]");
+         dataSocketId.setAttribute("data-socket-id", myClientSocketId);
+      } catch (error) {
+         console.error("Помилка встановлення data-socket-id:", error);
+      }
+   });
+
+   return myClientSocketId;
+}
+getMySocketId();
+// console.log(getMySocketId());
+
+// socket.on("connect", () => {
+//    console.log("Socket connected:", socket.id);
+//    socket.emit("join-lobby", {
+//       lobbyId: 1,
+//    });
+//    myClientSocketId = socket.id;
+// });
+
 min = 0;
 hour = 0;
 //Оставляем вашу функцию
@@ -14,11 +44,9 @@ function init() {
    setInterval(tick, 1000);
 }
 
-//Основная функция tick()
 function tick() {
    sec++;
    if (sec >= 60) {
-      //задаем числовые параметры, меняющиеся по ходу работы программы
       min++;
       sec = sec - 60;
    }
@@ -26,7 +54,8 @@ function tick() {
    if (sec < 10) {
       if (min < 10) {
          if (hour < 10) {
-            document.getElementById("timer").innerHTML = "0" + min + ":0" + sec;
+            document.getElementById("timer-").innerHTML =
+               "0" + min + ":0" + sec;
          } else {
             document.getElementById("timer").innerHTML = "0" + min + ":0" + sec;
          }
@@ -354,6 +383,7 @@ function sendBoardUpdate() {
    socket.emit("first-player-board:update", {
       lobbyId: 1,
       board: gameCells,
+      timer,
    });
 }
 
