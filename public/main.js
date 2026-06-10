@@ -3,29 +3,30 @@ let myClientSocketId = null;
 const socketConnected = new Promise((resolve) => {
    socket.on("connect", () => {
       console.log("Socket connected:", socket.id);
+      myClientSocketId = socket.id;
       socket.emit("join-lobby", {
          lobbyId: 1,
       });
-      myClientSocketId = socket.id;
-      resolve();
+
+      resolve(socket.id);
    });
 });
 
 async function getMySocketId() {
-   await socketConnected.then(() => {
-      console.log("Мій Socket IDqweqweqweqwe:", myClientSocketId);
+   const socketId = await socketConnected;
+   console.log("Мій Socket IDqweqweqweqwe:", myClientSocketId);
 
-      try {
-         let dataSocektId = document.querySelector("[data-socket-id]");
-         dataSocketId.setAttribute("data-socket-id", myClientSocketId);
-      } catch (error) {
-         console.error("Помилка встановлення data-socket-id:", error);
+   try {
+      let dataSocketId = document.querySelector("[data-socket-id]");
+      if (dataSocketId) {
+         dataSocketId.setAttribute("data-socket-id", socketId);
       }
-   });
-
-   return myClientSocketId;
+   } catch (error) {
+      console.error("Помилка встановлення data-socket-id:", error);
+   }
+   return socketId;
 }
-getMySocketId();
+
 // console.log(getMySocketId());
 
 // socket.on("connect", () => {
@@ -152,7 +153,8 @@ for (let i = 0; i < row; i++) {
       }
    }
 }
-function generateCells(Cells) {
+
+function generateCells(Cells, container) {
    let template = ``;
 
    Cells.forEach((row) => {
@@ -171,14 +173,17 @@ function generateCells(Cells) {
       });
    });
 
-   document.querySelector(".player-grid").innerHTML = template;
+   container.innerHTML = template;
 }
+const myGrid = document.querySelector("[data-my-board]");
+const enemyGrid = document.querySelector("[data-enemy-board]");
 
+generateCells(gameCells, myGrid);
+
+socket.on("first-player-board:receive", (data) => {
+   generateCells(data.board, enemyGrid);
+});
 const grid = document.querySelector(".player-grid");
-
-if (grid) {
-   generateCells(gameCells);
-}
 
 var cells = document.querySelectorAll(".player-grid .cell");
 var popupGameOver = document.querySelector(".game_over.lost");
@@ -194,85 +199,104 @@ function checkWin() {
 function restartGame() {
    location.reload();
 }
-cells.forEach(function (element) {
-   element.addEventListener("mousedown", function (event) {
-      if (event.button === 2) {
-         event.target.classList.toggle("flag");
-      }
-   });
-});
-let timerStart = false;
-cells.forEach(function (timerEvent) {
-   timerEvent.addEventListener(
-      "click",
-      function (timer) {
-         if (!timerStart) {
-            timerStart = true;
-            init();
-         }
-      },
-      { once: true },
-   );
-});
+
 let clickCount = 0;
-cells.forEach(function (cell) {
-   cell.addEventListener("click", function (event) {
+const playerGrid = document.querySelector(".player-grid");
+if (playerGrid) {
+   playerGrid.addEventListener("click", function (event) {
+      const elt = event.target.closest(".cell");
+
+      if (!elt) return;
+
       clickCount++;
       document.querySelector(".step_counter").innerHTML = `${clickCount}`;
-      var elt = event.target.closest(".cell");
+
       let rowValue = parseInt(elt.getAttribute("data-row"));
       let columnValue = parseInt(elt.getAttribute("data-column"));
-      var index = elt.getAttribute("data-index");
+      let index = elt.getAttribute("data-index");
+
       let currentData = gameCells[rowValue][columnValue];
+
       if (index == "bomb") {
          elt.classList.add("bomb");
          popupGameOver.style.display = "flex";
-      } else {
-         if (currentData.bombsCounts !== "") {
-            currentData.status = "opened";
+         return;
+      }
 
-            elt.classList.remove("closed");
-            elt.classList.add("opened");
-            sendBoardUpdate();
-            checkWin();
-            return;
-         }
-         for (let x = -1; x <= 1; x++) {
-            for (let y = -1; y <= 1; y++) {
-               let GameRowValue = rowValue + x;
-               let GameColumnValue = columnValue + y;
+      if (currentData.bombsCounts !== "") {
+         currentData.status = "opened";
+
+         elt.classList.remove("closed");
+         elt.classList.add("opened");
+
+         sendBoardUpdate();
+         checkWin();
+         return;
+      }
+
+      for (let x = -1; x <= 1; x++) {
+         for (let y = -1; y <= 1; y++) {
+            let GameRowValue = rowValue + x;
+            let GameColumnValue = columnValue + y;
+
+            if (
+               GameRowValue >= 0 &&
+               GameRowValue < row &&
+               GameColumnValue >= 0 &&
+               GameColumnValue < column
+            ) {
+               let targetCell = gameCells[GameRowValue][GameColumnValue];
+
+               let CellsOpened = document.querySelector(
+                  `[data-row="${GameRowValue}"][data-column="${GameColumnValue}"]`,
+               );
+
                if (
-                  GameRowValue >= 0 &&
-                  GameRowValue < row &&
-                  GameColumnValue >= 0 &&
-                  GameColumnValue < column
+                  targetCell.class !== "bomb" &&
+                  targetCell.bombsCounts === ""
                ) {
-                  let targetCell = gameCells[GameRowValue][GameColumnValue];
-                  let CellsOpened = document.querySelector(
-                     `[data-row="${GameRowValue}"][data-column="${GameColumnValue}"]`,
-                  );
-                  if (
-                     targetCell.class !== "bomb" &&
-                     targetCell.bombsCounts === ""
-                  ) {
-                     targetCell.status = "opened";
+                  targetCell.status = "opened";
+
+                  if (CellsOpened) {
                      CellsOpened.classList.add("opened");
                      CellsOpened.classList.remove("closed");
-                     sendBoardUpdate();
-                     checkWin();
                   }
                }
             }
          }
+      }
 
-         elt.classList.remove("closed");
-         currentData.status = "opened";
-         elt.classList.add("opened");
-         sendBoardUpdate();
-         checkWin();
+      elt.classList.remove("closed");
+      elt.classList.add("opened");
+      currentData.status = "opened";
+
+      sendBoardUpdate();
+      checkWin();
+   });
+}
+
+if (playerGrid) {
+   playerGrid.addEventListener("mousedown", function (event) {
+      const cell = event.target.closest(".cell");
+
+      if (!cell) return;
+
+      if (event.button === 2) {
+         cell.classList.toggle("flag");
       }
    });
-});
+}
+
+let timerStart = false;
+
+if (playerGrid) {
+   playerGrid.addEventListener("click", function () {
+      if (!timerStart) {
+         timerStart = true;
+         init();
+      }
+   });
+}
 
 function ViewAllUsers(userlist) {
    let listUsers = ``;
@@ -385,29 +409,4 @@ function sendBoardUpdate() {
       board: gameCells,
       timer,
    });
-}
-
-socket.on("first-player-board:receive", (data) => {
-   generateCellsMultiplayer(data.board);
-});
-function generateCellsMultiplayer(Cells) {
-   let template = ``;
-
-   Cells.forEach((row) => {
-      row.forEach((Cell) => {
-         template += `
-            <div 
-               class="cell size ${Cell.status}" 
-               data-row="${Cell.row}" 
-               data-column="${Cell.column}" 
-               data-index="${Cell.class}" 
-               data-number="${Cell.bombsCounts}"
-            >
-               ${Cell.bombsCounts}
-            </div>
-         `;
-      });
-   });
-
-   document.querySelector(".grid.multiplayer").innerHTML = template;
 }
