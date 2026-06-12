@@ -1,9 +1,8 @@
 const socket = io();
-let myClientSocketId = null;
 const socketConnected = new Promise((resolve) => {
    socket.on("connect", () => {
       console.log("Socket connected:", socket.id);
-      myClientSocketId = socket.id;
+
       socket.emit("join-lobby", {
          lobbyId: 1,
       });
@@ -12,20 +11,20 @@ const socketConnected = new Promise((resolve) => {
    });
 });
 
-async function getMySocketId() {
-   const socketId = await socketConnected;
-   console.log("Мій Socket IDqweqweqweqwe:", myClientSocketId);
+// async function getMySocketId() {
+//    const socketId = await socketConnected;
+//    console.log("Мій Socket IDqweqweqweqwe:", myClientSocketId);
 
-   try {
-      let dataSocketId = document.querySelector("[data-socket-id]");
-      if (dataSocketId) {
-         dataSocketId.setAttribute("data-socket-id", socketId);
-      }
-   } catch (error) {
-      console.error("Помилка встановлення data-socket-id:", error);
-   }
-   return socketId;
-}
+//    try {
+//       let dataSocketId = document.querySelector("[data-socket-id]");
+//       if (dataSocketId) {
+//          dataSocketId.setAttribute("data-socket-id", socketId);
+//       }
+//    } catch (error) {
+//       console.error("Помилка встановлення data-socket-id:", error);
+//    }
+//    return socketId;
+// }
 
 // console.log(getMySocketId());
 
@@ -55,8 +54,7 @@ function tick() {
    if (sec < 10) {
       if (min < 10) {
          if (hour < 10) {
-            document.getElementById("timer-").innerHTML =
-               "0" + min + ":0" + sec;
+            document.getElementById("timer").innerHTML = "0" + min + ":0" + sec;
          } else {
             document.getElementById("timer").innerHTML = "0" + min + ":0" + sec;
          }
@@ -179,23 +177,27 @@ const myGrid = document.querySelector("[data-my-board]");
 const enemyGrid = document.querySelector("[data-enemy-board]");
 
 generateCells(gameCells, myGrid);
-
+const stepEnemy = document.querySelector("[data-enemy-counter]");
 socket.on("first-player-board:receive", (data) => {
    generateCells(data.board, enemyGrid);
+   stepEnemy.innerHTML = `${data.counter}`;
 });
 const grid = document.querySelector(".player-grid");
-
 var cells = document.querySelectorAll(".player-grid .cell");
 var popupGameOver = document.querySelector(".game_over.lost");
 var popupGameWin = document.querySelector(".game_over.win");
+
 function checkWin() {
    const closedCells = document.querySelectorAll(".closed");
    if (closedCells.length === bombs.length) {
       popupGameWin.style.display = "flex";
       document.querySelector(".steps").innerHTML =
          `Кількість кроків: ${clickCount}`;
+      document.querySelector(".username").innerHTML = `Користувач: ${gameUser}`;
    }
+   return gameUser;
 }
+
 function restartGame() {
    location.reload();
 }
@@ -274,7 +276,7 @@ if (playerGrid) {
       checkWin();
    });
 }
-
+console.log(checkWin());
 if (playerGrid) {
    playerGrid.addEventListener("mousedown", function (event) {
       const cell = event.target.closest(".cell");
@@ -407,6 +409,8 @@ function sendBoardUpdate() {
    socket.emit("first-player-board:update", {
       lobbyId: 1,
       board: gameCells,
+      counter: clickCount,
+      winner: checkWin(),
       timer,
    });
 }

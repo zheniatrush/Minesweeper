@@ -14,9 +14,9 @@
             <div class="mine-icon">💣</div>
             <h1>Сапер</h1>
             <% if (isAdmin === 'admin') { %>
-            <p>Адмін-панель</p>
+            <p>Адмін-панель <br class="actual-user"><%= actualUser %></br></p>
             <% } else if (isAdmin === 'user') { %>
-            <p>Користувач: <%= actualUser %></p>
+            <p>Користувач: <br class="actual-user"><%= actualUser %></br></p>
             <% } %>
          </div>
 
@@ -46,14 +46,14 @@
       <div class="game_container">
          <div class="game_menu">
             <div class="timer" id="timer">00:00</div>
-            <div class="step_counter">0</div>
+            <div class="step_counter" data-my-counter>0</div>
          </div>
          <div class="grid player-grid" data-my-board></div>
       </div>
       <div class="game_container multiplayer">
          <div class="game_menu">
             <div class="timer" id="timer">00:00</div>
-            <div class="step_counter">0</div>
+            <div class="step_counter" data-enemy-counter>0</div>
          </div>
          <div class="grid multiplayer" data-enemy-board></div>
       </div>
@@ -68,6 +68,7 @@
       <div class="game_over win">
          <img src="../win.png" alt="Game Over" />
          <p>ТИ ВИГРАВ!</p>
+         <p class="username"></p>
          <p class="steps"></p>
          <button class="restart_button" onclick="restartGame()">
             ПЕРЕЗАПУСК
@@ -75,7 +76,9 @@
       </div>
       
    </body>
-
+<script>
+   const gameUser = <%- JSON.stringify(actualUser) %>;
+</script>
 <script src="/socket.io/socket.io.js"></script>
 <script src="/main.js"></script>
 </html>

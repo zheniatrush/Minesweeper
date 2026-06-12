@@ -20,6 +20,8 @@ function initSocket(server) {
             await Lobby.update(
                {
                   first_player_json: data.board,
+                  counter_one: data.counter,
+                  winner: data.winner,
                },
                {
                   where: {
@@ -32,6 +34,8 @@ function initSocket(server) {
                .to(`lobby-${data.lobbyId}`)
                .emit("first-player-board:receive", {
                   board: data.board,
+                  counter: data.counter,
+                  winner: data.winner,
                });
          } catch (error) {
             console.error("Помилка запису поля в БД:", error);

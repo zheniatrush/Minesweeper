@@ -38,6 +38,9 @@ app.use("/", authRoutes);
 const pageRoutes = require("./routes/page.routes");
 app.use("/", pageRoutes);
 
+// const apiRoutes = require("./routes/api.routes");
+// app.use("/", apiRoutes);
+
 app.use(express.static(path.join(__dirname, "public")));
 const { Op } = require("sequelize");
 //=================================== EJS ==========================================
